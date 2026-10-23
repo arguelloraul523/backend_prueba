@@ -1,1 +1,0 @@
-import{l as a}from"./sena-u3creWsx.js";import{_ as r,o as s,c as o,V as c}from"./index-Cz8GTseK.js";const e=["src"],t={__name:"BrandMark",setup(_){return(n,l)=>(s(),o("img",{src:c(a),alt:"SENA",class:"brand",draggable:"false"},null,8,e))}},d=r(t,[["__scopeId","data-v-2c361747"]]);export{d as B};
