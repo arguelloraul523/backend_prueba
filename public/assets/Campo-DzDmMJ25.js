@@ -1,1 +1,0 @@
-import{o as t,c as s,a as o,O as a,P as l,Q as c}from"./index-C_Mn9cNu.js";const r={class:"fld"},i={class:"fld__label"},_={key:0,class:"fld__hint"},m={__name:"Campo",props:{label:String,hint:String},setup(e){return(n,d)=>(t(),s("div",r,[o("span",i,a(e.label),1),l(n.$slots,"default"),e.hint?(t(),s("span",_,a(e.hint),1)):c("",!0)]))}};export{m as _};
