@@ -4,11 +4,11 @@
  * encadenadas y separadas por .bail(). Ver la explicacion completa alla.
  * @module validations/usuario.validation
  */
-import { check } from "express-validator";
+import { check, param } from "express-validator";
 import { validateFields } from "../middlewares/validateFields.js";
 import { usuarioHelper } from "../helpers/usuario.helper.js";
 
-const { validateExistEmail } = usuarioHelper;
+const { validateExistEmail, validateExistUsuarioById } = usuarioHelper;
 
 const usuarioVali = {};
 
@@ -49,6 +49,47 @@ usuarioVali.validateLogin = [
     .isEmail()
     .withMessage("El email no es valido"),
   check("password", "La contraseña es obligatoria").notEmpty(),
+  validateFields,
+];
+
+/**
+ * Valida los datos para editar un usuario. La contraseña es opcional: si viene
+ * vacia se conserva la actual.
+ */
+usuarioVali.validateUpdateUsuario = [
+  param("id", "El id no es valido")
+    .isMongoId()
+    .bail()
+    .custom(async (id) => {
+      await validateExistUsuarioById(id);
+    }),
+  check("nombre", "El nombre es obligatorio").notEmpty(),
+  check("email", "El email es obligatorio")
+    .notEmpty()
+    .bail()
+    .isEmail()
+    .withMessage("El email no es valido")
+    .bail()
+    .custom(async (email, { req }) => {
+      await validateExistEmail(email, req.params.id);
+    }),
+  check("password")
+    .optional({ checkFalsy: true })
+    .isLength({ min: 6 })
+    .withMessage("La contraseña debe tener al menos 6 caracteres"),
+  validateFields,
+];
+
+/**
+ * Valida que el id exista (activar / desactivar).
+ */
+usuarioVali.validateExistUsuario = [
+  param("id", "El id no es valido")
+    .isMongoId()
+    .bail()
+    .custom(async (id) => {
+      await validateExistUsuarioById(id);
+    }),
   validateFields,
 ];
 

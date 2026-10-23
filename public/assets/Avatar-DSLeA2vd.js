@@ -1,0 +1,1 @@
+import{_ as o,o as c,c as r,O as p,n as i,m as e,ap as l,Y as m}from"./index-C_Mn9cNu.js";const _={__name:"Avatar",props:{name:{type:String,default:""},seed:String},setup(s){const a=s,t=e(()=>l(a.name)),n=e(()=>m(a.seed||a.name));return(u,d)=>(c(),r("span",{class:"av",style:i({"--h":n.value})},p(t.value),5))}},v=o(_,[["__scopeId","data-v-1875bf66"]]);export{v as A};

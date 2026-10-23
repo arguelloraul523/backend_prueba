@@ -3,8 +3,20 @@ import { usuarioCtrl } from "../controller/usuario.controller.js";
 import { usuarioVali } from "../validations/usuario.validation.js";
 import { validateJWT } from "../middlewares/validateJWT.js";
 
-const { validateRegisterUsuario, validateLogin } = usuarioVali;
-const { registerUsuario, loginUsuario } = usuarioCtrl;
+const {
+  validateRegisterUsuario,
+  validateLogin,
+  validateUpdateUsuario,
+  validateExistUsuario,
+} = usuarioVali;
+const {
+  registerUsuario,
+  loginUsuario,
+  getUsuarios,
+  updateUsuario,
+  activeUsuario,
+  inactiveUsuario,
+} = usuarioCtrl;
 
 const routerUsuario = Router();
 
@@ -29,5 +41,15 @@ routerUsuario.post(
   validateRegisterUsuario,
   registerUsuario
 );
+
+// Historial de accesos: todas piden token.
+// GET /api/usuarios                -> listar cuentas
+// PUT /api/usuarios/update/:id     -> editar
+// PUT /api/usuarios/active/:id     -> activar
+// PUT /api/usuarios/inactive/:id   -> desactivar
+routerUsuario.get("/", validateJWT, getUsuarios);
+routerUsuario.put("/update/:id", validateJWT, validateUpdateUsuario, updateUsuario);
+routerUsuario.put("/active/:id", validateJWT, validateExistUsuario, activeUsuario);
+routerUsuario.put("/inactive/:id", validateJWT, validateExistUsuario, inactiveUsuario);
 
 export { routerUsuario };

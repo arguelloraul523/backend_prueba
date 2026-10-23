@@ -79,4 +79,63 @@ usuarioCtrl.loginUsuario = async (req, res) => {
   }
 };
 
+/**
+ * Listar todas las cuentas (activas e inactivas), las mas nuevas primero.
+ * El password no sale gracias al toJSON del modelo.
+ */
+usuarioCtrl.getUsuarios = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find().sort({ createdAt: -1 });
+    res.json(usuarios);
+  } catch (error) {
+    res.status(400).json({ msg: "No fue posible terminar la operacion" });
+  }
+};
+
+/**
+ * Editar nombre y email. Si llega una contraseña nueva se hashea; si no, se conserva.
+ */
+usuarioCtrl.updateUsuario = async (req, res) => {
+  const { nombre, email, password } = req.body;
+  try {
+    const cambios = {
+      nombre: nombre.toUpperCase().trim(),
+      email: email.toLowerCase().trim(),
+    };
+    if (password) {
+      cambios.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+    }
+    await Usuario.findByIdAndUpdate(req.params.id, cambios);
+    res.json({ msg: "Usuario actualizado correctamente" });
+  } catch (error) {
+    res.status(400).json({ msg: "No fue posible terminar la operacion" });
+  }
+};
+
+/** Activar una cuenta (status 0). */
+usuarioCtrl.activeUsuario = async (req, res) => {
+  try {
+    await Usuario.findByIdAndUpdate(req.params.id, { status: 0 });
+    res.json({ msg: "Usuario activado correctamente" });
+  } catch (error) {
+    res.status(400).json({ msg: "No fue posible terminar la operacion" });
+  }
+};
+
+/**
+ * Desactivar una cuenta (status 1). Borrado logico: el registro no se elimina.
+ * Nadie puede desactivar su propia cuenta (si no, se quedaria sin acceso).
+ */
+usuarioCtrl.inactiveUsuario = async (req, res) => {
+  try {
+    if (req.usuario && req.usuario._id.toString() === req.params.id) {
+      return res.status(400).json({ msg: "No puedes desactivar tu propia cuenta" });
+    }
+    await Usuario.findByIdAndUpdate(req.params.id, { status: 1 });
+    res.json({ msg: "Usuario desactivado correctamente" });
+  } catch (error) {
+    res.status(400).json({ msg: "No fue posible terminar la operacion" });
+  }
+};
+
 export { usuarioCtrl };
